@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button class="btn">抽题</button>
+    <div class="box"></div>
+    <script>
+        // let data = '';
+        let oBox = document.querySelector('.box');
+        let oBtn = document.querySelector('.btn');
+
+        oBtn.addEventListener('click', () => {
+            getFile('interView.md', function (data) {
+                let arr = data.split(/\n\r\n/g).filter((val)=>{
+                    if(val.indexOf('#')==0){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                    
+                });
+                oBox.innerHTML='';
+                console.log(arr);
+                let rdms = num(3, 0, arr.length-1);
+                console.log(rdms);
+
+                rdms.forEach((val, index)=>{
+                    let oH1 = document.createElement('h1');
+                    typing(oH1, arr[rdms[index]],0);
+                    oBox.appendChild(oH1);
+                    
+                })
+                
+                
+                
+            });
+        });
+
+        
+
+        function getFile(url, fn) {
+            let oAjax = new XMLHttpRequest();
+            oAjax.open('GET', url);
+            oAjax.send();
+            oAjax.addEventListener('readystatechange', () => {
+
+                if (oAjax.readyState == 4 && oAjax.status == 200) {
+                    // console.log(oAjax.responseText);
+
+                    return fn(oAjax.responseText);
+                }
+            })
+        }
+
+        function typing(obj,str, i) {
+            
+            obj.timer = null;
+            if(i<str.length){
+                obj.innerHTML = str.slice(0, i++)+'_';
+                console.log(i);
+                
+                
+                obj.timer = setTimeout(()=>{
+                    
+                    arguments.callee(obj, str, i);
+                } , 100)
+                
+            }else{
+                obj.innerHTML = str;
+                clearTimeout(obj.timer);
+            }
+        }
+        function num(n, min, max) {
+            let arr = [];
+            while (arr.length < n) {
+                let rdm = Math.floor(Math.random() * (max - min + 1)) + min;
+                if(!arr.includes(rdm)){
+                    arr.push(rdm);
+                }
+            }
+            return arr;
+        }
+    </script>
+</body>
+
+</html>
