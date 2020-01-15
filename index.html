@@ -18,32 +18,55 @@
 
         oBtn.addEventListener('click', () => {
             getFile('interView.md', function (data) {
-                let arr = data.split(/\n\r\n/g).filter((val)=>{
-                    if(val.indexOf('#')==0){
-                        return false;
-                    }else{
-                        return true;
-                    }
-                    
-                });
-                oBox.innerHTML='';
-                console.log(arr);
-                let rdms = num(3, 0, arr.length-1);
+                
+                let arr = data.split(/\s*#\s\S+\s+/g);
+                let rdms = [];
+                arr.shift();
+                arr.forEach((val, index) => {
+                    arr[index] = val.split(/\s{4}/g);
+                    rdms.push(num(2, 0, arr[index].length - 1));
+                })
                 console.log(rdms);
 
-                rdms.forEach((val, index)=>{
+                oBox.innerHTML = '';
+
+                // let rdms = num(3, 0, arr.length-1);
+                // console.log(rdms);
+
+                rdms.forEach((val, i) => {
+                    let title = '';
                     let oH1 = document.createElement('h1');
-                    typing(oH1, arr[rdms[index]],0);
+                    oH1.style.color='red';
+                    switch (i) {
+                        case 0:
+                            title = 'HTML&CSS:';
+                            break;
+                        case 1:
+                            title = 'JS:';
+                            break;
+                        case 2:
+                            title = '其他:';
+                            break;
+                        default:
+                            break;
+                    }
+                    typing(oH1, title, 0);
                     oBox.appendChild(oH1);
-                    
+                    val.forEach((val, j) => {
+                        let oH2 = document.createElement('h2');
+                        typing(oH2, arr[i][rdms[i][j]], 0);
+                        oBox.appendChild(oH2);
+                    })
+
+
                 })
-                
-                
-                
+
+
+
             });
         });
 
-        
+
 
         function getFile(url, fn) {
             let oAjax = new XMLHttpRequest();
@@ -59,29 +82,30 @@
             })
         }
 
-        function typing(obj,str, i) {
-            
+        function typing(obj, str, i) {
+
             obj.timer = null;
-            if(i<str.length){
-                obj.innerHTML = str.slice(0, i++)+'_';
+            if (i < str.length) {
+                obj.innerHTML = str.slice(0, i++) + '_';
                 console.log(i);
-                
-                
-                obj.timer = setTimeout(()=>{
-                    
+
+
+                obj.timer = setTimeout(() => {
+
                     arguments.callee(obj, str, i);
-                } , 100)
-                
-            }else{
+                }, 100)
+
+            } else {
                 obj.innerHTML = str;
                 clearTimeout(obj.timer);
             }
         }
+
         function num(n, min, max) {
             let arr = [];
             while (arr.length < n) {
                 let rdm = Math.floor(Math.random() * (max - min + 1)) + min;
-                if(!arr.includes(rdm)){
+                if (!arr.includes(rdm)) {
                     arr.push(rdm);
                 }
             }
